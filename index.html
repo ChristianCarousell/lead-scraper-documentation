@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carousell SG Lead Scraper</title>
+<title>Carousell SG Lead Scraper System</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -349,7 +349,7 @@
   <div class="hero-grid"></div>
   <div class="hero-content">
     <div class="hero-badge"><span></span> Internal Research &amp; Build — May 2026</div>
-    <h1>Fail-safe<br><em>Lead Scraper</em><br>System</h1>
+    <h1>Fail-safe<br><em>Lead Scraping</em><br>Automation</h1>
     <p class="hero-sub">From zero to a fully enriched Singapore business lead — with UEN, mobile number, business email, website, and Carousell profile — at a fraction of a cent per lead.</p>
     <div class="hero-stats">
       <div class="stat">
@@ -357,7 +357,7 @@
         <div class="stat-label">Leads per run (current baseline)</div>
       </div>
       <div class="stat">
-        <div class="stat-val"><span>~$</span>0.004</div>
+        <div class="stat-val"><span>~$</span>0.10</div>
         <div class="stat-label">Est. cost per lead</div>
       </div>
       <div class="stat">
@@ -632,12 +632,12 @@
     <div style="margin-bottom:2rem;">
       <div style="font-weight:600;font-size:0.85rem;margin-bottom:0.75rem;">Select Apify Plan</div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;" id="planToggle">
-        <div class="plan-btn active" onclick="selectPlan('free')" id="plan-free">
+        <div class="plan-btn" onclick="selectPlan('free')" id="plan-free">
           <div style="font-weight:800;font-size:1rem;">Free</div>
           <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.15rem;">$5 prepaid/mo</div>
           <div style="font-size:0.7rem;color:var(--accent);margin-top:0.25rem;">$4.00 / 1k places</div>
         </div>
-        <div class="plan-btn" onclick="selectPlan('starter')" id="plan-starter">
+        <div class="plan-btn active" onclick="selectPlan('starter')" id="plan-starter">
           <div style="font-weight:800;font-size:1rem;">Starter</div>
           <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.15rem;">$29/mo prepaid</div>
           <div style="font-size:0.7rem;color:var(--accent);margin-top:0.25rem;">$4.00 / 1k places</div>
@@ -673,29 +673,32 @@
         <div class="lbl">Apify Runs</div>
       </div>
       <div class="calc-result-card">
+        <div class="val" id="subscriptionCost">$29.00</div>
+        <div class="lbl">Subscription/mo</div>
+      </div>
+      <div class="calc-result-card">
         <div class="val accent" id="apifyCost">$1.20</div>
-        <div class="lbl">Apify Cost (est.)</div>
+        <div class="lbl">Usage Cost (est.)</div>
       </div>
       <div class="calc-result-card">
         <div class="val green" id="uenCost">$0.00</div>
-        <div class="lbl">UEN Lookup</div>
+        <div class="lbl">UEN + Contact</div>
       </div>
       <div class="calc-result-card">
-        <div class="val green" id="contactCost">$0.00</div>
-        <div class="lbl">Contact Enrichment</div>
+        <div class="val" id="totalCost">$30.20</div>
+        <div class="lbl">Total Est./mo</div>
       </div>
       <div class="calc-result-card">
-        <div class="val" id="totalCost">$1.20</div>
-        <div class="lbl">Total Est. Cost</div>
-      </div>
-      <div class="calc-result-card">
-        <div class="val" id="costPerLead">~$0.004</div>
+        <div class="val" id="costPerLead">~$0.101</div>
         <div class="lbl">Est. Cost Per Lead</div>
       </div>
     </div>
 
     <!-- PLAN WARNING -->
     <div id="planWarning" style="display:none;margin-top:1rem;padding:0.85rem 1rem;border-radius:8px;font-size:0.82rem;"></div>
+
+    <!-- SUBSCRIPTION NOTE -->
+    <div id="subNote" style="margin-top:0.75rem;padding:0.75rem 1rem;background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.2);border-radius:8px;font-size:0.78rem;color:var(--muted2);"></div>
 
     <div class="addon-box">
       <div class="addon-toggle">
@@ -1255,14 +1258,14 @@ function resetPipelineAnim() {
   document.getElementById('animStatus').textContent = 'Click to simulate a runtime failure on step 3';
 }
 
-// Plan data -- sourced from apify.com/compass/crawler-google-places/pricing
+// Plan data -- sourced from apify.com/pricing and apify.com/compass/crawler-google-places/pricing
 const PLANS = {
   free:     { name: 'Free',     ratePerK: 4.00, prepaid: 5,   monthlyFee: 0   },
   starter:  { name: 'Starter',  ratePerK: 4.00, prepaid: 29,  monthlyFee: 29  },
   scale:    { name: 'Scale',    ratePerK: 3.00, prepaid: 199, monthlyFee: 199 },
   business: { name: 'Business', ratePerK: 2.10, prepaid: 999, monthlyFee: 999 }
 };
-let currentPlan = 'free';
+let currentPlan = 'starter'; // Default to Starter -- confirmed actual plan in use
 
 function selectPlan(plan) {
   currentPlan = plan;
@@ -1278,47 +1281,60 @@ function updateCalc() {
   const plan = PLANS[currentPlan];
   const runs = Math.ceil(leads / 300);
 
-  // Apify cost = runs × 300 × (ratePerK / 1000)
-  const apifyCost = runs * 300 * (plan.ratePerK / 1000);
+  // Usage cost = runs × 300 × (ratePerK / 1000)
+  const usageCost = runs * 300 * (plan.ratePerK / 1000);
+  const subscriptionFee = plan.monthlyFee;
   const serpRate = 0.025; // SerpAPI Starter plan rate
   const serpCost = carousell ? leads * serpRate : 0;
-  const total = apifyCost + serpCost;
+
+  // Total = subscription + usage + serp
+  const total = subscriptionFee + usageCost + serpCost;
   const cpp = total / leads;
 
   document.getElementById('leadsVal').textContent = leads.toLocaleString() + ' leads';
   document.getElementById('runsVal').textContent = runs;
-  document.getElementById('apifyCost').textContent = '~$' + apifyCost.toFixed(2);
+  document.getElementById('subscriptionCost').textContent = subscriptionFee === 0 ? '$0.00' : '$' + subscriptionFee.toFixed(2);
+  document.getElementById('apifyCost').textContent = '~$' + usageCost.toFixed(2);
   document.getElementById('uenCost').textContent = '$0.00';
-  document.getElementById('contactCost').textContent = '$0.00';
   document.getElementById('totalCost').textContent = '~$' + total.toFixed(2);
-  document.getElementById('costPerLead').textContent = '~$' + cpp.toFixed(4);
+  document.getElementById('costPerLead').textContent = '~$' + cpp.toFixed(3);
   document.getElementById('serpLeads').textContent = leads.toLocaleString();
   document.getElementById('serpCost').textContent = '$' + serpCost.toFixed(2);
 
-  // Plan warning logic
+  // Plan warning logic -- based on usage cost vs prepaid credit
   const warning = document.getElementById('planWarning');
-  const apifyLeadCost = apifyCost;
 
-  if (currentPlan === 'free' && apifyLeadCost > plan.prepaid) {
+  if (currentPlan === 'free' && usageCost > plan.prepaid) {
     warning.style.display = 'block';
     warning.style.background = 'rgba(239,68,68,0.08)';
     warning.style.border = '1px solid rgba(239,68,68,0.3)';
     warning.style.color = '#f87171';
-    warning.innerHTML = `⚠️ <strong>Free plan credit exhausted.</strong> ${leads.toLocaleString()} leads costs ~$${apifyLeadCost.toFixed(2)} but the Free plan only includes $${plan.prepaid} prepaid credit per month. Excess usage is blocked until next cycle. <strong>Recommended: upgrade to Starter ($29/mo) to avoid interruption.</strong>`;
-  } else if (currentPlan === 'starter' && apifyLeadCost > plan.prepaid) {
+    warning.innerHTML = `⚠️ <strong>Free plan credit exhausted.</strong> ${leads.toLocaleString()} leads costs ~$${usageCost.toFixed(2)} in usage but Free plan only includes $${plan.prepaid} prepaid/month. Excess usage is blocked until next cycle. <strong>Recommended: upgrade to Starter ($29/mo).</strong>`;
+  } else if (currentPlan === 'starter' && usageCost > plan.prepaid) {
     warning.style.display = 'block';
     warning.style.background = 'rgba(249,115,22,0.08)';
     warning.style.border = '1px solid rgba(249,115,22,0.3)';
     warning.style.color = 'var(--accent)';
-    warning.innerHTML = `⚠️ <strong>Starter prepaid budget exceeded.</strong> ~$${apifyLeadCost.toFixed(2)} in usage vs $${plan.prepaid} included. Overage will be billed additionally. Consider <strong>Scale ($199/mo)</strong> for this volume — also unlocks a lower rate of $3.00/1k places.`;
-  } else if (currentPlan === 'scale' && apifyLeadCost > plan.prepaid) {
+    warning.innerHTML = `⚠️ <strong>Starter prepaid budget exceeded.</strong> ~$${usageCost.toFixed(2)} usage vs $${plan.prepaid} included. Overage billed on top of the $29/mo subscription. Consider <strong>Scale ($199/mo)</strong> — also unlocks $3.00/1k rate.`;
+  } else if (currentPlan === 'scale' && usageCost > plan.prepaid) {
     warning.style.display = 'block';
     warning.style.background = 'rgba(249,115,22,0.08)';
     warning.style.border = '1px solid rgba(249,115,22,0.3)';
     warning.style.color = 'var(--accent)';
-    warning.innerHTML = `⚠️ <strong>Scale prepaid budget exceeded.</strong> ~$${apifyLeadCost.toFixed(2)} in usage vs $${plan.prepaid} included. Overage billed additionally. Consider <strong>Business ($999/mo)</strong> for this volume — lowest rate at $2.10/1k places.`;
+    warning.innerHTML = `⚠️ <strong>Scale prepaid budget exceeded.</strong> ~$${usageCost.toFixed(2)} usage vs $${plan.prepaid} included. Consider <strong>Business ($999/mo)</strong> — lowest rate at $2.10/1k places.`;
   } else {
     warning.style.display = 'none';
+  }
+
+  // Note about subscription being a fixed monthly cost
+  const subNote = document.getElementById('subNote');
+  if (subNote) {
+    if (subscriptionFee > 0) {
+      subNote.style.display = 'block';
+      subNote.innerHTML = `💡 The $${subscriptionFee}/mo subscription is a <strong>fixed monthly fee</strong> regardless of how many runs you do. The more leads an AM generates per month, the lower the cost per lead becomes — subscription gets diluted across more leads.`;
+    } else {
+      subNote.style.display = 'none';
+    }
   }
 
   const carousellRow = document.getElementById('carousellCostRow');
