@@ -353,8 +353,8 @@
     <p class="hero-sub">From zero to a fully enriched Singapore business lead — with UEN, mobile number, business email, website, and Carousell profile — at a fraction of a cent per lead.</p>
     <div class="hero-stats">
       <div class="stat">
-        <div class="stat-val">300<span>+</span></div>
-        <div class="stat-label">Leads per run</div>
+        <div class="stat-val">300<span>*</span></div>
+        <div class="stat-label">Leads per run (current baseline)</div>
       </div>
       <div class="stat">
         <div class="stat-val"><span>~$</span>0.004</div>
@@ -431,7 +431,7 @@
     <div class="wf-node">
       <div class="wf-icon">📊</div>
       <div class="wf-label">Append to Sheet</div>
-      <div class="wf-sub">300 leads instantly</div>
+      <div class="wf-sub">Up to 300 leads instantly</div>
     </div>
   </div>
 
@@ -864,11 +864,15 @@
   <h2>One form submission,<br>300 leads</h2>
   <p>The entire pipeline is triggered by a simple n8n form. Submit an industry keyword and the system handles the rest automatically.</p>
   <div class="form-sim">
-    <div class="form-sim-title">Carousell SG Lead Scraper</div>
-    <div class="form-sim-sub">Generates 300 Singapore business leads by industry with UEN and a website</div>
+    <div class="form-sim-title">Carousell Lead Scraper</div>
+    <div class="form-sim-sub">Generates up to 300 business leads by industry and city. More specific queries produce more unique results.</div>
     <div class="form-field">
       <label>Industry Keywords <span class="req">*</span></label>
       <input class="form-input" placeholder="e.g. cleaning services" id="formIndustry" oninput="updateFormPreview()">
+    </div>
+    <div class="form-field">
+      <label>City</label>
+      <input class="form-input" placeholder="e.g. Jurong, Tampines, Central Singapore, Hong Kong Island" id="formCity">
     </div>
     <div class="form-field">
       <label>Exclude Keywords</label>
@@ -878,7 +882,10 @@
     <div class="form-powered">Form automated with n8n</div>
   </div>
   <div id="formResult" style="display:none;max-width:420px;margin:0 auto;padding:1rem;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);border-radius:8px;text-align:center;font-size:0.85rem;color:var(--green);">
-    ✅ Workflow triggered! Scraping 300 <span id="formIndustryResult">cleaning services</span> businesses in Singapore...
+    ✅ Workflow triggered! Scraping up to 300 <span id="formIndustryResult">cleaning services</span> businesses...
+  </div>
+  <div style="max-width:420px;margin:1rem auto 0;padding:0.85rem 1rem;background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.2);border-radius:8px;font-size:0.78rem;color:var(--muted2);">
+    <strong style="color:var(--text);">💡 Tip for more unique leads:</strong> Running the same industry keyword twice returns largely the same 300 results. Adding a different city each run — "Jurong" vs "Tampines" vs "Central" — produces less overlap and more unique leads per dollar spent.
   </div>
 </section>
 
@@ -943,11 +950,11 @@
   <div class="achieve-grid" style="margin-top:2rem;">
     <div class="achieve-card">
       <div class="achieve-icon">🔢</div>
-      <div><div class="achieve-title">300 leads is the hard limit per query</div><div class="achieve-desc">Apify's Google Maps actor caps at 300 results per search query. This is a Google Maps API constraint, not an Apify limitation. Cannot be bypassed.</div></div>
+      <div><div class="achieve-title">300 leads is the tested baseline per query</div><div class="achieve-desc">Current tested limit via Apify API call is 300 results per query. Apify integrated natively in n8n shows promise for higher limits (potentially 1,000+) but requires budget approval to test since each run has a real cost. The 300 figure is a confirmed baseline, not a hard ceiling.</div></div>
     </div>
     <div class="achieve-card">
       <div class="achieve-icon">🎯</div>
-      <div><div class="achieve-title">Query diversity = more unique leads</div><div class="achieve-desc">Running "cleaning services Singapore" twice returns largely the same 300. But "office cleaning Singapore" vs "house cleaning Singapore" produces significantly less overlap — more total unique leads per dollar spent.</div></div>
+      <div><div class="achieve-title">Query diversity = more unique leads</div><div class="achieve-desc">Running "cleaning services Singapore" twice returns largely the same 300. Adding a city variable — "cleaning services Jurong" vs "cleaning services Tampines" — produces significantly less overlap. The form now accepts a City field specifically for this reason.</div></div>
     </div>
     <div class="achieve-card">
       <div class="achieve-icon">🔍</div>
@@ -1028,9 +1035,9 @@
   <h2>What this system cannot do (yet)</h2>
   <div class="limit-grid">
     <div class="limit-card">
-      <div class="limit-title">⚠️ 300 Lead Hard Cap</div>
-      <div class="limit-desc">Google Maps via Apify caps at 300 results per query. Cannot be bypassed — it is a platform constraint.</div>
-      <div class="limit-workaround">→ Workaround: Use diverse industry keywords across multiple runs to maximize unique leads per dollar</div>
+      <div class="limit-title">⚠️ 300 Lead Baseline Per Query</div>
+      <div class="limit-desc">Current tested limit via Apify API call is 300 results per search query. Not yet confirmed as a hard ceiling -- Apify natively integrated in n8n may support higher limits up to 1,000+.</div>
+      <div class="limit-workaround">→ Short term: Use city + industry keyword combinations to maximize unique leads per run. Long term: Pending budget approval to test 1,000 lead runs via native n8n Apify integration.</div>
     </div>
     <div class="limit-card">
       <div class="limit-title">⚠️ Dedup Cost is Unavoidable</div>
@@ -1085,21 +1092,28 @@
       <div class="step-num">3</div>
       <div class="step-content">
         <h3>Run first batch and measure conversion rate</h3>
-        <p>Each AM submits their first industry keyword query. Track how many leads from the first 300 convert to contacted → qualified → proposal → closed. This establishes the ROI baseline.</p>
+        <p>Each AM submits their first industry + city keyword query. Track how many leads from the first 300 convert to contacted → qualified → proposal → closed. This establishes the ROI baseline.</p>
       </div>
     </div>
-    <div class="step-item">
-      <div class="step-num">4</div>
+    <div class="step-item" style="border-color:rgba(34,211,238,0.2);">
+      <div class="step-num" style="color:var(--accent2);">4</div>
       <div class="step-content">
-        <h3>Scale based on results</h3>
-        <p>If the first 300 leads produce measurable pipeline, upgrade Apify to the $49/mo plan for unlimited runs. Budget ask is data-backed — not speculative.</p>
+        <h3>Approve budget to test 1,000 leads per run <span style="font-size:0.7rem;font-family:'Space Mono',monospace;background:rgba(34,211,238,0.1);color:var(--accent2);border:1px solid rgba(34,211,238,0.3);padding:0.2rem 0.6rem;border-radius:99px;margin-left:0.5rem;">PENDING APPROVAL</span></h3>
+        <p>Apify integrated natively in n8n (vs current API call method) shows promise for higher result limits. Testing at 1,000 leads per run requires a budget decision since each test run has a real cost. If confirmed, this triples the leads per query while keeping cost-per-lead the same.</p>
       </div>
     </div>
     <div class="step-item">
       <div class="step-num">5</div>
       <div class="step-content">
+        <h3>Scale based on results</h3>
+        <p>If the first batches produce measurable pipeline, upgrade Apify to Scale ($199/mo) or Business ($999/mo) to unlock lower per-place rates. Budget ask is data-backed — not speculative.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">6</div>
+      <div class="step-content">
         <h3>HK market expansion</h3>
-        <p>The same 4 workflows support HK with a country parameter change. UEN equivalent (BR number) lookup requires identifying the HK Companies Registry equivalent of sgpbusiness.com.</p>
+        <p>The same 5 workflows support HK with a country parameter change. UEN equivalent (BR number) lookup requires identifying the HK Companies Registry equivalent of sgpbusiness.com.</p>
       </div>
     </div>
     <div class="step-item" style="border-color:rgba(163,230,53,0.3);">
@@ -1120,7 +1134,7 @@
           </div>
         </div>
         <div style="margin-top:1rem;padding:0.75rem;background:rgba(163,230,53,0.05);border:1px solid rgba(163,230,53,0.2);border-radius:8px;font-size:0.8rem;color:var(--accent3);">
-          → Requires approval to proceed. If approved, this would be added as Workflow 5 — running after contact enrichment, looking up the company name on LinkedIn and writing DM data back to the sheet.
+          → Requires approval to proceed. If approved, this would be added as Workflow 6 — running after contact enrichment, looking up the company name on LinkedIn and writing DM data back to the sheet.
         </div>
       </div>
     </div>
