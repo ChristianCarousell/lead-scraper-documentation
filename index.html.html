@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousell SG Lead Intelligence System</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #f97316;
+    --accent2: #22d3ee;
+    --accent3: #a3e635;
+    --red: #ef4444;
+    --green: #22c55e;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --muted2: #94a3b8;
+    --carousell: #f97316;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; color: var(--accent); letter-spacing: -0.02em; }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a { color: var(--muted2); font-size: 0.8rem; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+
+  /* SECTIONS */
+  section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+  h1 { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.05; letter-spacing: -0.03em; }
+  h2 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1rem; }
+  h3 { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem; }
+  p { color: var(--muted2); line-height: 1.75; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 8rem;
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(249,115,22,0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 20% 80%, rgba(34,211,238,0.06) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 2rem; width: 100%; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3);
+    padding: 0.35rem 1rem; border-radius: 99px;
+    font-size: 0.75rem; font-family: 'Space Mono', monospace; color: var(--accent);
+    margin-bottom: 2rem;
+  }
+  .hero-badge span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+  .hero h1 { margin-bottom: 1.5rem; }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero-sub { font-size: 1.15rem; color: var(--muted2); max-width: 580px; margin-bottom: 3rem; }
+  .hero-stats { display: flex; gap: 3rem; flex-wrap: wrap; }
+  .stat { }
+  .stat-val { font-family: 'Outfit', sans-serif; font-size: 2.8rem; font-weight: 900; color: var(--text); line-height: 1; }
+  .stat-val span { color: var(--accent); }
+  .stat-label { font-size: 0.78rem; color: var(--muted); font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+
+  /* PROBLEM SECTION */
+  .problem-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+  .problem-col { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+  .problem-col.bad { border-color: rgba(239,68,68,0.3); }
+  .problem-col.good { border-color: rgba(34,197,94,0.3); }
+  .col-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+  .col-tag { font-size: 0.7rem; font-family: 'Space Mono', monospace; padding: 0.25rem 0.75rem; border-radius: 99px; font-weight: 500; }
+  .col-tag.red { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .col-tag.green { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-label { font-size: 0.85rem; color: var(--muted2); }
+  .metric-val { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; }
+  .metric-val.red { color: #ef4444; }
+  .metric-val.green { color: #22c55e; }
+
+  /* WORKFLOW DIAGRAM */
+  .workflow-flow { display: flex; align-items: center; gap: 0; margin: 2rem 0; flex-wrap: wrap; }
+  .wf-node {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1rem 1.25rem; text-align: center; min-width: 140px;
+    position: relative; cursor: default;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .wf-node:hover { border-color: var(--accent); background: rgba(249,115,22,0.05); }
+  .wf-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+  .wf-label { font-size: 0.75rem; font-weight: 600; color: var(--text); }
+  .wf-sub { font-size: 0.65rem; color: var(--muted); margin-top: 0.15rem; font-family: 'Space Mono', monospace; }
+  .wf-arrow { color: var(--muted); font-size: 1.2rem; padding: 0 0.5rem; flex-shrink: 0; }
+  .wf-node.active { border-color: var(--accent); background: rgba(249,115,22,0.08); }
+
+  /* UEN SIMULATION */
+  .uen-sim { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-top: 2rem; }
+  .uen-query { font-family: 'Space Mono', monospace; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; color: var(--accent2); word-break: break-all; }
+  .uen-results { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .uen-result {
+    display: flex; align-items: center; gap: 1rem;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; transition: all 0.5s;
+  }
+  .uen-result.winner { border-color: var(--green); background: rgba(34,197,94,0.08); }
+  .uen-result.loser { opacity: 0.4; }
+  .uen-name { flex: 1; font-size: 0.8rem; font-weight: 600; }
+  .uen-status { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 99px; font-family: 'Space Mono', monospace; }
+  .uen-status.live { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .uen-status.struck { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .uen-status.ceased { background: rgba(100,116,139,0.2); color: var(--muted2); }
+  .uen-score { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; min-width: 30px; text-align: center; }
+  .uen-score.high { color: var(--green); }
+  .uen-score.mid { color: var(--accent); }
+  .uen-score.low { color: var(--muted); }
+  .uen-number { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent2); }
+  .score-bar { height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; margin-top: 0.25rem; }
+  .score-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+  .sim-btn {
+    background: var(--accent); color: white; border: none; border-radius: 8px;
+    padding: 0.75rem 2rem; font-family: 'Outfit', sans-serif; font-weight: 700;
+    cursor: pointer; font-size: 0.9rem; transition: opacity 0.2s;
+  }
+  .sim-btn:hover { opacity: 0.85; }
+  .sim-result { margin-top: 1rem; padding: 1rem; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; display: none; }
+  .sim-result.show { display: block; }
+
+  /* MODULAR VS MONOLITHIC */
+  .pipeline-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+  .pipeline-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .pipeline-box h3 { margin-bottom: 1.5rem; }
+  .pipeline-nodes { display: flex; flex-direction: column; gap: 0.5rem; }
+  .p-node {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.6rem 0.9rem; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 0.8rem; font-weight: 500; transition: all 0.4s;
+    position: relative;
+  }
+  .p-node .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .p-node.broken { border-color: rgba(239,68,68,0.5); background: rgba(239,68,68,0.08); }
+  .p-node.broken .dot { background: var(--red); }
+  .p-node.dead { opacity: 0.25; border-color: var(--border); }
+  .p-node.dead .dot { background: var(--muted); }
+  .p-node.safe { border-color: rgba(34,197,94,0.3); }
+  .p-connector { width: 2px; height: 16px; background: var(--border); margin-left: 1.35rem; transition: background 0.4s; }
+  .p-connector.dead { background: rgba(239,68,68,0.3); }
+  .pipeline-cost { margin-top: 1rem; padding: 0.75rem; border-radius: 8px; text-align: center; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; transition: all 0.4s; }
+  .pipeline-cost.lost { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .pipeline-cost.saved { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+  .anim-controls { display: flex; gap: 1rem; margin-top: 1.5rem; align-items: center; }
+  .anim-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0.5rem 1.25rem; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+  .anim-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .anim-status { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted2); }
+
+  /* COST CALCULATOR */
+  .calc-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-top: 2rem; }
+  .slider-group { margin-bottom: 2rem; }
+  .slider-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+  .slider-label span { font-weight: 600; font-size: 0.9rem; }
+  .slider-val { font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--accent); font-size: 1.1rem; }
+  input[type=range] {
+    width: 100%; appearance: none; height: 4px; border-radius: 2px;
+    background: var(--border); outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    appearance: none; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); cursor: pointer; border: 2px solid var(--bg);
+  }
+  .slider-ticks { display: flex; justify-content: space-between; margin-top: 0.35rem; }
+  .slider-ticks span { font-size: 0.65rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .calc-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .calc-result-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; text-align: center; }
+  .calc-result-card .val { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.9rem; color: var(--text); line-height: 1.1; }
+  .calc-result-card .val.accent { color: var(--accent); }
+  .calc-result-card .val.green { color: var(--green); }
+  .calc-result-card .lbl { font-size: 0.7rem; color: var(--muted); font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+  .addon-box { border: 1px solid rgba(34,211,238,0.3); background: rgba(34,211,238,0.04); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+  .plan-btn {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s;
+  }
+  .plan-btn:hover { border-color: var(--accent); }
+  .plan-btn.active { border-color: var(--accent); background: rgba(249,115,22,0.1); }
+  .plan-btn.active div:first-child { color: var(--accent); }
+  .addon-toggle { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+  .toggle-switch { position: relative; width: 44px; height: 24px; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--border); border-radius: 24px; transition: 0.3s; }
+  .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+  input:checked + .toggle-slider { background: var(--accent2); }
+  input:checked + .toggle-slider:before { transform: translateX(20px); }
+  .addon-label { font-weight: 600; color: var(--accent2); }
+  .addon-sub { font-size: 0.8rem; color: var(--muted2); }
+
+  /* SHEET SIMULATION */
+  .sheet-sim { margin-top: 1.5rem; overflow-x: auto; }
+  .sheet-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; font-family: 'Space Mono', monospace; }
+  .sheet-table th { background: var(--surface2); color: var(--muted2); padding: 0.5rem 0.75rem; text-align: left; border: 1px solid var(--border); white-space: nowrap; font-weight: 500; }
+  .sheet-table td { padding: 0.45rem 0.75rem; border: 1px solid var(--border); color: var(--text); white-space: nowrap; }
+  .sheet-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .cell-green { color: var(--green) !important; }
+  .cell-orange { color: var(--accent) !important; }
+  .cell-blue { color: var(--accent2) !important; }
+  .cell-muted { color: var(--muted) !important; }
+
+  /* ROLLOUT COMPARISON */
+  .rollout-toggle { display: flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 2rem; width: fit-content; }
+  .rollout-btn { padding: 0.5rem 1.5rem; border-radius: 7px; border: none; background: transparent; color: var(--muted2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+  .rollout-btn.active { background: var(--accent); color: white; }
+  .rollout-content { display: none; }
+  .rollout-content.active { display: block; }
+  .rollout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .am-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+  .am-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; }
+  .am-stat { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 0.3rem 0; border-bottom: 1px solid var(--border); color: var(--muted2); }
+  .am-stat:last-child { border-bottom: none; }
+  .am-stat span { color: var(--text); font-weight: 600; }
+
+  /* FORM SIM */
+  .form-sim { background: white; border-radius: 12px; padding: 2rem; max-width: 420px; margin: 2rem auto; }
+  .form-sim-title { font-family: 'Outfit', sans-serif; color: #111; font-size: 1.1rem; font-weight: 700; text-align: center; margin-bottom: 0.25rem; }
+  .form-sim-sub { color: #666; font-size: 0.8rem; text-align: center; margin-bottom: 1.5rem; }
+  .form-field { margin-bottom: 1.25rem; }
+  .form-field label { display: block; font-size: 0.8rem; font-weight: 600; color: #333; margin-bottom: 0.4rem; }
+  .form-field label .req { color: #f97316; }
+  .form-input { width: 100%; padding: 0.6rem 0.9rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; color: #333; font-family: 'Inter', sans-serif; outline: none; }
+  .form-input:focus { border-color: #f97316; }
+  .form-input::placeholder { color: #94a3b8; }
+  .form-submit { width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 6px; padding: 0.75rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 0.5rem; }
+  .form-powered { text-align: center; font-size: 0.65rem; color: #94a3b8; margin-top: 1rem; }
+
+  /* PRICING TABLE */
+  .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+  .pricing-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .pricing-card h3 { margin-bottom: 0.25rem; }
+  .pricing-card .provider { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+  .pricing-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .pricing-row:last-child { border-bottom: none; }
+  .pricing-row .lbl { color: var(--muted2); }
+  .pricing-row .val { font-weight: 600; color: var(--text); }
+  .pricing-row .val.accent { color: var(--accent); }
+  .refresh-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(163,230,53,0.1); border: 1px solid rgba(163,230,53,0.3); color: var(--accent3); font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 99px; font-family: 'Space Mono', monospace; }
+
+  /* ACHIEVEMENTS */
+  .achieve-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
+  .achieve-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; display: flex; gap: 1rem; }
+  .achieve-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .achieve-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.25rem; }
+  .achieve-desc { font-size: 0.8rem; color: var(--muted2); }
+
+  /* LIMITATIONS */
+  .limit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
+  .limit-card { background: var(--surface); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 1.5rem; }
+  .limit-title { font-weight: 700; font-size: 0.9rem; color: #f87171; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .limit-desc { font-size: 0.82rem; color: var(--muted2); }
+  .limit-workaround { margin-top: 0.75rem; font-size: 0.78rem; color: var(--accent3); background: rgba(163,230,53,0.06); border: 1px solid rgba(163,230,53,0.2); border-radius: 6px; padding: 0.5rem 0.75rem; }
+
+  /* NEXT STEPS */
+  .steps-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .step-item { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+  .step-num { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--accent); min-width: 32px; line-height: 1; }
+  .step-content h3 { margin-bottom: 0.25rem; font-size: 0.95rem; }
+  .step-content p { font-size: 0.82rem; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; font-family: 'Space Mono', monospace; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* UTILITY */
+  .tag { display: inline-block; font-size: 0.7rem; font-family: 'Space Mono', monospace; padding: 0.2rem 0.6rem; border-radius: 99px; }
+  .tag.orange { background: rgba(249,115,22,0.15); color: var(--accent); }
+  .tag.cyan { background: rgba(34,211,238,0.15); color: var(--accent2); }
+  .tag.lime { background: rgba(163,230,53,0.15); color: var(--accent3); }
+  .tag.red { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+  @media (max-width: 768px) {
+    .problem-compare, .pipeline-compare, .pricing-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 1.5rem; }
+    nav .nav-links { display: none; }
+    .workflow-flow { gap: 0.5rem; }
+    .wf-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🟠 Carousell Lead Intelligence</div>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#how">How It Works</a>
+    <a href="#uen">UEN Lookup</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#calculator">Calculator</a>
+    <a href="#rollout">Rollout</a>
+    <a href="#findings">Findings</a>
+    <a href="#limitations">Limitations</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span></span> Internal Research &amp; Build — May 2026</div>
+    <h1>Automated<br><em>Lead Intelligence</em><br>System</h1>
+    <p class="hero-sub">From zero to a fully enriched Singapore business lead — with UEN, mobile number, business email, website, and Carousell profile — at a fraction of a cent per lead.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-val">300<span>+</span></div>
+        <div class="stat-label">Leads per run</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val"><span>~$</span>0.004</div>
+        <div class="stat-label">Est. cost per lead</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">5<span>×</span></div>
+        <div class="stat-label">Isolated workflows</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val"><span>$</span>0</div>
+        <div class="stat-label">AI cost per lead</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-label">01 — The Problem</div>
+  <h2>Manual research doesn't scale</h2>
+  <p>Finding, verifying, and enriching a single business lead manually takes significant time and cost — and still produces inconsistent data quality.</p>
+  <div class="problem-compare">
+    <div class="problem-col bad">
+      <div class="col-header"><span class="col-tag red">❌ Manual Research</span></div>
+      <div class="metric-row"><span class="metric-label">Time per lead</span><span class="metric-val red">30–60 min</span></div>
+      <div class="metric-row"><span class="metric-label">Cost per lead</span><span class="metric-val red">$15–30 USD</span></div>
+      <div class="metric-row"><span class="metric-label">Leads per day</span><span class="metric-val red">5–15</span></div>
+      <div class="metric-row"><span class="metric-label">Duplicate risk</span><span class="metric-val red">High</span></div>
+      <div class="metric-row"><span class="metric-label">Data consistency</span><span class="metric-val red">Variable</span></div>
+      <div class="metric-row"><span class="metric-label">UEN included</span><span class="metric-val red">Rarely</span></div>
+    </div>
+    <div class="problem-col good">
+      <div class="col-header"><span class="col-tag green">✅ This System</span></div>
+      <div class="metric-row"><span class="metric-label">Time per lead</span><span class="metric-val green">&lt; 30 seconds</span></div>
+      <div class="metric-row"><span class="metric-label">Cost per lead</span><span class="metric-val green">$0.004 USD</span></div>
+      <div class="metric-row"><span class="metric-label">Leads per run</span><span class="metric-val green">Up to 300</span></div>
+      <div class="metric-row"><span class="metric-label">Duplicate risk</span><span class="metric-val green">Zero (auto-dedup)</span></div>
+      <div class="metric-row"><span class="metric-label">Data consistency</span><span class="metric-val green">Standardized</span></div>
+      <div class="metric-row"><span class="metric-label">UEN included</span><span class="metric-val green">Always attempted</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-label">02 — How It Works</div>
+  <h2>5 isolated workflows</h2>
+  <p>The system is split into isolated pipelines, each running on its own schedule. A failure in one never affects the others. Each workflow reads from and writes to the same shared Google Sheet.</p>
+
+  <div class="workflow-flow" style="margin-top:2.5rem;">
+    <div class="wf-node active">
+      <div class="wf-icon">📋</div>
+      <div class="wf-label">Form Trigger</div>
+      <div class="wf-sub">Industry + Country</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-node">
+      <div class="wf-icon">🗺️</div>
+      <div class="wf-label">Apify Scrape</div>
+      <div class="wf-sub">Google Maps API</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-node">
+      <div class="wf-icon">🔄</div>
+      <div class="wf-label">Deduplicate</div>
+      <div class="wf-sub">vs existing sheet</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-node">
+      <div class="wf-icon">📊</div>
+      <div class="wf-label">Append to Sheet</div>
+      <div class="wf-sub">300 leads instantly</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1.5rem;">
+    <div class="card" style="border-color:rgba(249,115,22,0.3)">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <span style="font-size:1.3rem;">🔢</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">Workflow 2 — UEN Enrichment</div>
+          <div class="tag orange" style="margin-top:0.2rem;">Every 30 min</div>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Scrapes sgpbusiness.com for each lead. Scores results by name match + Live Company status. Writes the correct UEN back to the row.</p>
+    </div>
+    <div class="card" style="border-color:rgba(34,211,238,0.3)">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <span style="font-size:1.3rem;">📧</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">Workflow 3 — Contact Enrichment</div>
+          <div class="tag cyan" style="margin-top:0.2rem;">Every 2 min</div>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Scrapes homepage, /contact, and /about pages via Jina AI. Extracts business email and writes a validated SG mobile number (starts with 8 or 9) to the <strong style="color:var(--text)">Website number</strong> column — separate from the raw Google Maps phone. No AI, no cost per lead.</p>
+    </div>
+    <div class="card" style="border-color:rgba(163,230,53,0.3)">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <span style="font-size:1.3rem;">🛒</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">Workflow 4 — Carousell Check</div>
+          <div class="tag lime" style="margin-top:0.2rem;">Every 10 min <span style="color:#ef4444">(add-on)</span></div>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Uses SerpAPI to search carousell.sg/u/ for the company name. Extracts username from result URLs. Optional add-on — uses SerpAPI credits.</p>
+    </div>
+    <div class="card" style="border-color:rgba(239,68,68,0.3)">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <span style="font-size:1.3rem;">🏆</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">Workflow 5 — Existing Client Check</div>
+          <div class="tag red" style="margin-top:0.2rem;">Every 1 hour <span style="color:var(--muted)">· runs after WF2</span></div>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Cross-references each lead's UEN and phone number against the SG Top Spenders list. Flags matches as <strong style="color:#ef4444">Skip - Existing Client</strong> so AMs never cold-outreach a paying customer.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.2);border-radius:10px;font-size:0.82rem;color:var(--muted2);">
+    <strong style="color:var(--text);">Workflow dependency:</strong> WF5 runs after WF2 by design. The existing client check requires a UEN to cross-reference — leads without a UEN yet are automatically skipped and checked on the next hourly cycle.
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- UEN SIMULATION -->
+<section id="uen">
+  <div class="section-label">03 — UEN Lookup Deep Dive</div>
+  <h2>Why we replaced AI with<br>direct source lookup</h2>
+  <p>The previous system used Gemini AI to search the web and guess the UEN. This costs tokens per lead and introduces hallucination risk — the AI is inferring rather than reading authoritative data.</p>
+  <br>
+  <p>Our approach: query <strong style="color:var(--text)">sgpbusiness.com</strong> directly — the official ACRA-linked Singapore Business Directory — using Jina AI to read the page, then score results by name match. Free, accurate, and verifiable.</p>
+
+  <div class="uen-sim">
+    <div class="section-label" style="margin-bottom:0.5rem;">Live Simulation — Move Move Movers</div>
+    <div class="uen-query">
+      GET r.jina.ai/https://www.sgpbusiness.com/search?q=<span style="color:var(--green)">Move%20Move%20Movers</span>
+    </div>
+    <div style="font-size:0.8rem;color:var(--muted2);margin-bottom:1rem;">Jina renders the page as clean markdown text. We then scan for all UEN patterns and score each result:</div>
+
+    <div class="uen-results" id="uenResults">
+      <div class="uen-result" id="r0">
+        <div class="uen-name">MOVE MOVE MOVERS PTE. LTD.</div>
+        <div class="uen-status live">Live Company</div>
+        <div style="flex:1;max-width:120px;">
+          <div class="score-bar"><div class="score-fill" id="sf0" style="width:0%;background:var(--green)"></div></div>
+        </div>
+        <div class="uen-score high" id="sc0">—</div>
+        <div class="uen-number">202349387C</div>
+      </div>
+      <div class="uen-result" id="r1">
+        <div class="uen-name">MOVE MOVE (SG) PTE. LTD.</div>
+        <div class="uen-status live">Live Company</div>
+        <div style="flex:1;max-width:120px;">
+          <div class="score-bar"><div class="score-fill" id="sf1" style="width:0%;background:var(--accent)"></div></div>
+        </div>
+        <div class="uen-score mid" id="sc1">—</div>
+        <div class="uen-number">202232692G</div>
+      </div>
+      <div class="uen-result" id="r2">
+        <div class="uen-name">MOVE MOVE CONSTRUCTION PTE. LTD.</div>
+        <div class="uen-status struck">Struck Off</div>
+        <div style="flex:1;max-width:120px;">
+          <div class="score-bar"><div class="score-fill" id="sf2" style="width:0%;background:var(--muted)"></div></div>
+        </div>
+        <div class="uen-score low" id="sc2">—</div>
+        <div class="uen-number">202136613W</div>
+      </div>
+      <div class="uen-result" id="r3">
+        <div class="uen-name">MOVE MOVE PTE. LTD.</div>
+        <div class="uen-status live">Live Company</div>
+        <div style="flex:1;max-width:120px;">
+          <div class="score-bar"><div class="score-fill" id="sf3" style="width:0%;background:var(--accent)"></div></div>
+        </div>
+        <div class="uen-score mid" id="sc3">—</div>
+        <div class="uen-number">201921838K</div>
+      </div>
+      <div class="uen-result" id="r4">
+        <div class="uen-name">MOVE MOVE RELOCATIONS PTE. LTD.</div>
+        <div class="uen-status live">Live Company</div>
+        <div style="flex:1;max-width:120px;">
+          <div class="score-bar"><div class="score-fill" id="sf4" style="width:0%;background:var(--accent)"></div></div>
+        </div>
+        <div class="uen-score mid" id="sc4">—</div>
+        <div class="uen-number">202349385Z</div>
+      </div>
+      <div class="uen-result" id="r5">
+        <div class="uen-name">MOVE MOVE SERVICES</div>
+        <div class="uen-status ceased">Ceased</div>
+        <div style="flex:1;max-width:120px;">
+          <div class="score-bar"><div class="score-fill" id="sf5" style="width:0%;background:var(--muted)"></div></div>
+        </div>
+        <div class="uen-score low" id="sc5">—</div>
+        <div class="uen-number">53456136E</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.78rem;color:var(--muted2);">
+      <strong style="color:var(--text);">Scoring logic:</strong> Count matching words from "Move Move Movers" found in each result name (words &gt;2 chars). Add +1 bonus for Live Company status. Minimum score of 2 required to write to sheet.
+    </div>
+
+    <button class="sim-btn" onclick="runUENSim()">▶ Run Simulation</button>
+    <button class="sim-btn" onclick="resetUENSim()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);margin-left:0.75rem;">↺ Reset</button>
+
+    <div class="sim-result" id="simResult">
+      ✅ <strong>Winner: MOVE MOVE MOVERS PTE. LTD.</strong> — Score 4 (3 word matches + Live Company bonus)<br>
+      UEN <strong style="color:var(--accent2)">202349387C</strong> written to sheet row for "Move Move Movers"
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MODULAR VS MONOLITHIC -->
+<section id="architecture">
+  <div class="section-label">04 — Architecture Decision</div>
+  <h2>Why isolated workflows protect your budget</h2>
+  <p>A monolithic workflow runs all steps in sequence. If anything fails mid-run, every lead in that batch is lost — and the Apify cost is already spent. Our isolated design separates each enrichment step.</p>
+
+  <div class="pipeline-compare">
+    <div class="pipeline-box" style="border-color:rgba(239,68,68,0.2)">
+      <h3 style="color:#f87171;">❌ Monolithic (Previous System)</h3>
+      <div class="pipeline-nodes" id="monoNodes">
+        <div class="p-node" id="m0"><div class="dot"></div>Apify Scrape (300 leads)</div>
+        <div class="p-connector" id="mc0"></div>
+        <div class="p-node" id="m1"><div class="dot"></div>Gemini UEN Lookup</div>
+        <div class="p-connector" id="mc1"></div>
+        <div class="p-node" id="m2"><div class="dot"></div>Gemini Contact Extract</div>
+        <div class="p-connector" id="mc2"></div>
+        <div class="p-node" id="m3"><div class="dot"></div>Phone Normalize</div>
+        <div class="p-connector" id="mc3"></div>
+        <div class="p-node" id="m4"><div class="dot"></div>Append to Sheet</div>
+      </div>
+      <div class="pipeline-cost" id="monoCost" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted2);">Waiting...</div>
+    </div>
+
+    <div class="pipeline-box" style="border-color:rgba(34,197,94,0.2)">
+      <h3 style="color:#4ade80;">✅ Isolated Workflows (This System)</h3>
+      <div class="pipeline-nodes" id="modNodes">
+        <div class="p-node safe" id="d0"><div class="dot"></div>WF1: Apify Scrape → Sheet</div>
+        <div class="p-connector"></div>
+        <div class="p-node safe" id="d1"><div class="dot"></div>WF2: UEN Enrichment (scheduled)</div>
+        <div class="p-connector"></div>
+        <div class="p-node safe" id="d2"><div class="dot"></div>WF3: Contact Enrichment (scheduled)</div>
+        <div class="p-connector"></div>
+        <div class="p-node safe" id="d3"><div class="dot"></div>WF4: Carousell Check (optional)</div>
+      </div>
+      <div class="pipeline-cost" id="modCost" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted2);">Waiting...</div>
+    </div>
+  </div>
+
+  <div class="anim-controls">
+    <button class="anim-btn" onclick="runPipelineAnim()">▶ Simulate Failure</button>
+    <button class="anim-btn" onclick="resetPipelineAnim()">↺ Reset</button>
+    <span class="anim-status" id="animStatus">Click to simulate a runtime failure on step 3</span>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COST CALCULATOR -->
+<section id="calculator">
+  <div class="section-label">05 — Cost Calculator</div>
+  <h2>What does it actually cost?</h2>
+  <p>Costs vary by Apify subscription plan. Select your plan and drag the slider to see the real breakdown. All numbers are sourced directly from Apify's pricing page.</p>
+
+  <div class="calc-section">
+
+    <!-- PLAN TOGGLE -->
+    <div style="margin-bottom:2rem;">
+      <div style="font-weight:600;font-size:0.85rem;margin-bottom:0.75rem;">Select Apify Plan</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;" id="planToggle">
+        <div class="plan-btn active" onclick="selectPlan('free')" id="plan-free">
+          <div style="font-weight:800;font-size:1rem;">Free</div>
+          <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.15rem;">$5 prepaid/mo</div>
+          <div style="font-size:0.7rem;color:var(--accent);margin-top:0.25rem;">$4.00 / 1k places</div>
+        </div>
+        <div class="plan-btn" onclick="selectPlan('starter')" id="plan-starter">
+          <div style="font-weight:800;font-size:1rem;">Starter</div>
+          <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.15rem;">$29/mo prepaid</div>
+          <div style="font-size:0.7rem;color:var(--accent);margin-top:0.25rem;">$4.00 / 1k places</div>
+        </div>
+        <div class="plan-btn" onclick="selectPlan('scale')" id="plan-scale">
+          <div style="font-weight:800;font-size:1rem;">Scale</div>
+          <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.15rem;">$199/mo prepaid</div>
+          <div style="font-size:0.7rem;color:var(--accent);margin-top:0.25rem;">$3.00 / 1k places</div>
+        </div>
+        <div class="plan-btn" onclick="selectPlan('business')" id="plan-business">
+          <div style="font-weight:800;font-size:1rem;">Business</div>
+          <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.15rem;">$999/mo prepaid</div>
+          <div style="font-size:0.7rem;color:var(--accent);margin-top:0.25rem;">$2.10 / 1k places</div>
+        </div>
+      </div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem;">Note: Free and Starter plans have the same per-place rate ($4.00/1k). Scale and Business unlock lower rates via Silver/Gold discount. Unused prepaid credits expire monthly.</div>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">
+        <span>Number of leads you want per month</span>
+        <span class="slider-val" id="leadsVal">300 leads</span>
+      </div>
+      <input type="range" min="300" max="4500" step="300" value="300" id="leadsSlider" oninput="updateCalc()">
+      <div class="slider-ticks">
+        <span>300</span><span>1,500</span><span>3,000</span><span>4,500</span>
+      </div>
+    </div>
+
+    <div class="calc-results" id="calcResults">
+      <div class="calc-result-card">
+        <div class="val accent" id="runsVal">1</div>
+        <div class="lbl">Apify Runs</div>
+      </div>
+      <div class="calc-result-card">
+        <div class="val accent" id="apifyCost">$1.20</div>
+        <div class="lbl">Apify Cost (est.)</div>
+      </div>
+      <div class="calc-result-card">
+        <div class="val green" id="uenCost">$0.00</div>
+        <div class="lbl">UEN Lookup</div>
+      </div>
+      <div class="calc-result-card">
+        <div class="val green" id="contactCost">$0.00</div>
+        <div class="lbl">Contact Enrichment</div>
+      </div>
+      <div class="calc-result-card">
+        <div class="val" id="totalCost">$1.20</div>
+        <div class="lbl">Total Est. Cost</div>
+      </div>
+      <div class="calc-result-card">
+        <div class="val" id="costPerLead">~$0.004</div>
+        <div class="lbl">Est. Cost Per Lead</div>
+      </div>
+    </div>
+
+    <!-- PLAN WARNING -->
+    <div id="planWarning" style="display:none;margin-top:1rem;padding:0.85rem 1rem;border-radius:8px;font-size:0.82rem;"></div>
+
+    <div class="addon-box">
+      <div class="addon-toggle">
+        <label class="toggle-switch">
+          <input type="checkbox" id="carousellToggle" onchange="updateCalc()">
+          <span class="toggle-slider"></span>
+        </label>
+        <div>
+          <div class="addon-label">+ Carousell Profile Check (Add-on)</div>
+          <div class="addon-sub">Uses SerpAPI — Free tier: 250 searches/month (currently exhausted, refreshes monthly). Starter plan $25/mo = 1,000 searches at $0.025/search. Developer $75/mo = 5,000 at $0.015/search.</div>
+        </div>
+      </div>
+      <div id="carousellCostRow" style="display:none;padding:0.75rem;background:var(--surface);border-radius:8px;font-size:0.82rem;">
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--muted2);">SerpAPI cost for <span id="serpLeads">300</span> leads (Starter plan rate)</span>
+          <span style="color:var(--accent2);font-weight:700;" id="serpCost">$7.50</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem;">Decision on whether richer leads justify the SerpAPI cost is up to each AM.</div>
+      </div>
+    </div>
+
+    <!-- SHEET SIMULATION -->
+    <div style="margin-top:2rem;">
+      <div style="font-weight:700;margin-bottom:0.75rem;font-size:0.9rem;">📊 Sample of what you get in the sheet</div>
+      <div class="sheet-sim">
+        <table class="sheet-table">
+          <thead>
+            <tr>
+              <th>Lead ID</th>
+              <th>Company Name</th>
+              <th>Industry</th>
+              <th>UEN #</th>
+              <th>Business Email</th>
+              <th>Map Phone</th>
+              <th>Website number</th>
+              <th>Own Website</th>
+              <th>Is Premium Client</th>
+              <th>Carousell Profile</th>
+              <th>Rating</th>
+              <th>Outreach Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="cell-blue">SL-1779257-MMV</td><td>Move Move Movers</td><td>Mover</td><td class="cell-green">202349387C</td><td class="cell-green">sales@movemove.biz</td><td class="cell-muted">83325196</td><td class="cell-green">83325196</td><td class="cell-blue">movemove.biz</td><td class="cell-muted">—</td><td id="r0carousell" class="cell-muted">—</td><td>4.9</td><td class="cell-orange">Not Contacted</td></tr>
+            <tr style="background:rgba(239,68,68,0.04)"><td class="cell-blue">SL-1779278-SGR</td><td>SG Renovate</td><td>Renovation</td><td class="cell-green">53101332D</td><td class="cell-green">enquiry@jaystone.com</td><td class="cell-muted">62914846</td><td class="cell-muted">—</td><td class="cell-blue">renovate.sg</td><td style="color:#ef4444;font-weight:700;">Yes</td><td id="r1carousell" class="cell-muted">—</td><td>4.8</td><td style="color:#ef4444;font-weight:600;">Skip - Existing Client</td></tr>
+            <tr><td class="cell-blue">SL-1779278-DWA</td><td>DW Aircon Servicing</td><td>Aircon</td><td class="cell-green">202206518G</td><td class="cell-green">info@dwaircon.com</td><td class="cell-muted">69092200</td><td class="cell-green">90180264</td><td class="cell-blue">dwaircon.com</td><td class="cell-muted">—</td><td id="r2carousell" class="cell-muted">—</td><td>4.9</td><td class="cell-orange">Not Contacted</td></tr>
+            <tr style="background:rgba(239,68,68,0.04)"><td class="cell-blue">SL-1779340-HLP</td><td>Helpling Singapore</td><td>Cleaning</td><td class="cell-green">201501510D</td><td class="cell-green">hello@helpling.sg</td><td class="cell-muted">80789532</td><td class="cell-green">80789532</td><td class="cell-blue">helpling.com.sg</td><td style="color:#ef4444;font-weight:700;">Yes</td><td id="r3carousell" class="cell-muted">—</td><td>4.8</td><td style="color:#ef4444;font-weight:600;">Skip - Existing Client</td></tr>
+            <tr><td class="cell-blue">SL-1779342-MRV</td><td>Marvellous Aircon</td><td>Aircon</td><td class="cell-green">201718259H</td><td class="cell-green">info@marvellous.sg</td><td style="color:#f87171;">64286288</td><td class="cell-muted">—</td><td class="cell-blue">marvellous.sg</td><td class="cell-muted">—</td><td id="r4carousell" class="cell-muted">—</td><td>4.9</td><td class="cell-orange">Not Contacted</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:0.75rem;display:flex;gap:1.5rem;flex-wrap:wrap;">
+        <div style="font-size:0.75rem;color:var(--muted2);display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:rgba(34,197,94,0.4);border-radius:2px;display:inline-block;"></span> Website number — validated SG mobile only (8/9 prefix). WhatsApp-ready.</div>
+        <div style="font-size:0.75rem;color:var(--muted2);display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:rgba(248,113,113,0.4);border-radius:2px;display:inline-block;"></span> Map Phone in red — landline (6 prefix). Not WhatsApp-eligible.</div>
+        <div style="font-size:0.75rem;color:var(--muted2);display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:rgba(239,68,68,0.3);border-radius:2px;display:inline-block;"></span> Red row — existing Carousell client. Skip outreach.</div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:8px;font-size:0.78rem;color:var(--muted2);">
+        <strong style="color:var(--text);">Why some leads show a landline in Map Phone:</strong> Google Maps lists whatever number the business registered — which is often a landline. This is outside our control. WF3 independently scrapes the business website for a validated mobile number and writes it to <em>Website number</em>. If both columns are empty, the lead has no publicly available mobile — a signal for manual outreach or the future DM finder workflow.
+      </div>
+      <div id="carousellNote" style="display:none;margin-top:0.75rem;font-size:0.78rem;color:var(--accent2);">✓ Carousell Profile column populated when add-on is enabled</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ROLLOUT -->
+<section id="rollout">
+  <div class="section-label">06 — Proposed Rollout</div>
+  <h2>Per Account Manager deployment</h2>
+  <p>Because the system uses isolated workflows, spinning up a dedicated instance for each Account Manager takes minutes. Each AM controls their own budget, tracks their own leads, and owns their own ROI.</p>
+
+  <div style="margin-top:2rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+    <div style="font-weight:700;margin-bottom:0.5rem;">Why per-AM makes sense</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
+      <div style="display:flex;gap:0.75rem;"><span style="font-size:1.2rem;">📊</span><div><div style="font-weight:600;font-size:0.85rem;">ROI Tracking per AM</div><div style="font-size:0.78rem;color:var(--muted2);">Each AM's Apify cost is tied directly to their leads and their closed deals. Attribution is clean.</div></div></div>
+      <div style="display:flex;gap:0.75rem;"><span style="font-size:1.2rem;">💰</span><div><div style="font-weight:600;font-size:0.85rem;">$5 free credit to start</div><div style="font-size:0.78rem;color:var(--muted2);">Apify gives $5 free monthly credit — that's 300 leads per AM per month at zero cost to get started.</div></div></div>
+      <div style="display:flex;gap:0.75rem;"><span style="font-size:1.2rem;">🔧</span><div><div style="font-weight:600;font-size:0.85rem;">Fast to deploy</div><div style="font-size:0.78rem;color:var(--muted2);">Isolated workflow architecture means duplicating the workflows per AM is a quick configuration, not a rebuild.</div></div></div>
+      <div style="display:flex;gap:0.75rem;"><span style="font-size:1.2rem;">🎯</span><div><div style="font-weight:600;font-size:0.85rem;">AM controls their query</div><div style="font-size:0.78rem;color:var(--muted2);">Each AM submits their own industry keywords. More targeted queries = more relevant leads for their market.</div></div></div>
+    </div>
+  </div>
+
+  <div class="rollout-toggle" id="rolloutToggle">
+    <button class="rollout-btn active" onclick="switchRollout('shared')" id="btn-shared">Shared Account</button>
+    <button class="rollout-btn" onclick="switchRollout('perAM')" id="btn-perAM">Per Account Manager</button>
+  </div>
+
+  <div class="rollout-content active" id="rollout-shared">
+    <div class="card" style="border-color:rgba(239,68,68,0.2);margin-bottom:1rem;">
+      <div style="font-weight:700;color:#f87171;margin-bottom:0.75rem;">⚠️ Shared Account Risks</div>
+      <div style="font-size:0.83rem;color:var(--muted2);display:flex;flex-direction:column;gap:0.5rem;">
+        <div>• No spend attribution per AM — impossible to know who generated which leads</div>
+        <div>• Cannot tie a closed deal back to a specific AM's lead run or budget spend</div>
+        <div>• One AM depletes the shared budget leaving others unable to run until they top up</div>
+        <div>• Budget requests to management become guesswork — no per-AM ROI data to justify spend</div>
+        <div>• All leads land in one shared sheet — harder to segment by AM territory or campaign</div>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;">
+      <div style="font-weight:700;margin-bottom:0.75rem;font-size:0.85rem;">Example: 3 AMs sharing 1 account</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        <div style="text-align:center;padding:1rem;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;">SG AM</div>
+          <div style="font-size:0.75rem;color:var(--muted2);">Ran 300 leads</div>
+          <div style="font-size:0.75rem;color:#ef4444;margin-top:0.25rem;">$1.20 spent — from shared pool</div>
+        </div>
+        <div style="text-align:center;padding:1rem;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;">HK AM</div>
+          <div style="font-size:0.75rem;color:var(--muted2);">Also ran 300 leads</div>
+          <div style="font-size:0.75rem;color:#ef4444;margin-top:0.25rem;">$1.20 spent — no attribution</div>
+        </div>
+        <div style="text-align:center;padding:1rem;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;">Who closed?</div>
+          <div style="font-size:0.75rem;color:var(--muted2);">Deal closed from a lead</div>
+          <div style="font-size:0.75rem;color:#ef4444;margin-top:0.25rem;">No way to know which AM's run</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rollout-content" id="rollout-perAM">
+    <div class="card" style="border-color:rgba(34,197,94,0.2);margin-bottom:1rem;">
+      <div style="font-weight:700;color:#4ade80;margin-bottom:0.75rem;">✅ Per-AM Account Benefits</div>
+      <div style="font-size:0.83rem;color:var(--muted2);display:flex;flex-direction:column;gap:0.5rem;">
+        <div>• Each AM gets $5 free Apify credit = 300 leads/month at zero cost</div>
+        <div>• Revenue closed can be directly attributed to specific lead runs per AM</div>
+        <div>• Budget requests are data-driven: "I spent $X, closed $Y in deals"</div>
+        <div>• AMs run independently — no blocking, no conflicts</div>
+        <div>• Carousell Profile add-on is per-AM choice — those who want richer leads pay for it</div>
+      </div>
+    </div>
+    <div class="rollout-grid">
+      <div class="am-card" style="border-color:rgba(249,115,22,0.3)">
+        <div class="am-name">🇸🇬 SG Account Manager</div>
+        <div class="am-stat"><span class="lbl">Apify cost/300 leads</span><span>$1.20 USD</span></div>
+        <div class="am-stat"><span class="lbl">Leads/month</span><span>300</span></div>
+        <div class="am-stat"><span class="lbl">UEN + Contact</span><span style="color:var(--green)">$0</span></div>
+        <div class="am-stat"><span class="lbl">Carousell add-on</span><span style="color:var(--muted)">Optional</span></div>
+        <div class="am-stat"><span class="lbl">Total min cost</span><span style="color:var(--green)">$0</span></div>
+      </div>
+      <div class="am-card" style="border-color:rgba(34,211,238,0.3)">
+        <div class="am-name">🇭🇰 HK Account Manager</div>
+        <div class="am-stat"><span class="lbl">Apify cost/300 leads</span><span>$1.20 USD</span></div>
+        <div class="am-stat"><span class="lbl">Leads/month</span><span>300</span></div>
+        <div class="am-stat"><span class="lbl">UEN + Contact</span><span style="color:var(--green)">$0</span></div>
+        <div class="am-stat"><span class="lbl">Carousell add-on</span><span style="color:var(--muted)">Optional</span></div>
+        <div class="am-stat"><span class="lbl">Total min cost</span><span style="color:var(--green)">$0</span></div>
+      </div>
+      <div class="am-card" style="border-color:rgba(163,230,53,0.3)">
+        <div class="am-name">🇵🇭 PH Account Manager</div>
+        <div class="am-stat"><span class="lbl">Apify cost/300 leads</span><span>$1.20 USD</span></div>
+        <div class="am-stat"><span class="lbl">Leads/month</span><span>300</span></div>
+        <div class="am-stat"><span class="lbl">UEN + Contact</span><span style="color:var(--green)">$0</span></div>
+        <div class="am-stat"><span class="lbl">Carousell add-on</span><span style="color:var(--muted)">Optional</span></div>
+        <div class="am-stat"><span class="lbl">Total min cost</span><span style="color:var(--green)">$0</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FORM SIM -->
+<section id="form">
+  <div class="section-label">07 — How You Trigger It</div>
+  <h2>One form submission,<br>300 leads</h2>
+  <p>The entire pipeline is triggered by a simple n8n form. Submit an industry keyword and the system handles the rest automatically.</p>
+  <div class="form-sim">
+    <div class="form-sim-title">Carousell SG Lead Scraper</div>
+    <div class="form-sim-sub">Generates 300 Singapore business leads by industry with UEN and a website</div>
+    <div class="form-field">
+      <label>Industry Keywords <span class="req">*</span></label>
+      <input class="form-input" placeholder="e.g. cleaning services" id="formIndustry" oninput="updateFormPreview()">
+    </div>
+    <div class="form-field">
+      <label>Exclude Keywords</label>
+      <input class="form-input" placeholder="Optional. e.g. franchise, chain, government" id="formExclude">
+    </div>
+    <button class="form-submit" onclick="simulateFormSubmit()">Submit</button>
+    <div class="form-powered">Form automated with n8n</div>
+  </div>
+  <div id="formResult" style="display:none;max-width:420px;margin:0 auto;padding:1rem;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);border-radius:8px;text-align:center;font-size:0.85rem;color:var(--green);">
+    ✅ Workflow triggered! Scraping 300 <span id="formIndustryResult">cleaning services</span> businesses in Singapore...
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-label">08 — API Pricing &amp; Refresh Schedule</div>
+  <h2>Transparent cost structure</h2>
+  <p>Every cost in this system is public pricing. No hidden fees, no per-seat licensing.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Apify</h3>
+      <div class="provider">Lead Discovery — Google Maps</div>
+      <div class="pricing-row"><span class="lbl">Free plan rate</span><span class="val accent">$4.00 per 1,000 places</span></div>
+      <div class="pricing-row"><span class="lbl">Actual cost per 300 leads</span><span class="val accent">$1.20 USD</span></div>
+      <div class="pricing-row"><span class="lbl">Cost per lead (free plan)</span><span class="val accent">$0.004</span></div>
+      <div class="pricing-row"><span class="lbl">Business plan rate</span><span class="val">$2.10 per 1,000 → $0.63 per 300</span></div>
+      <div class="pricing-row"><span class="lbl">Hard limit per query</span><span class="val">300 places</span></div>
+      <div class="pricing-row"><span class="lbl">Pricing model</span><span class="val">Pay per scraped place (no monthly credit)</span></div>
+      <div class="pricing-row"><span class="lbl">Paid platform plan</span><span class="val">From $49/mo (unlocks lower per-place rates)</span></div>
+    </div>
+    <div class="pricing-card">
+      <h3>SerpAPI</h3>
+      <div class="provider">Carousell Profile Check — Add-on</div>
+      <div class="pricing-row"><span class="lbl">Free searches</span><span class="val accent">250/month</span></div>
+      <div class="pricing-row"><span class="lbl">Current status</span><span class="val" style="color:#ef4444;">473/250 used — refreshing soon</span></div>
+      <div class="pricing-row"><span class="lbl">Starter plan</span><span class="val">$25/mo — 1,000 searches ($0.025/search)</span></div>
+      <div class="pricing-row"><span class="lbl">Developer plan</span><span class="val">$75/mo — 5,000 searches ($0.015/search)</span></div>
+      <div class="pricing-row"><span class="lbl">Production plan</span><span class="val">$150/mo — 15,000 searches ($0.01/search)</span></div>
+      <div class="pricing-row"><span class="lbl">300 leads (Starter)</span><span class="val accent">$7.50</span></div>
+      <div class="pricing-row"><span class="lbl">Free tier refresh</span><span class="val"><span class="refresh-badge">↻ Monthly</span></span></div>
+    </div>
+    <div class="pricing-card">
+      <h3>Jina AI</h3>
+      <div class="provider">UEN Lookup + Contact Enrichment</div>
+      <div class="pricing-row"><span class="lbl">Cost</span><span class="val green">$0 — Free tier</span></div>
+      <div class="pricing-row"><span class="lbl">Used for</span><span class="val">sgpbusiness.com scraping</span></div>
+      <div class="pricing-row"><span class="lbl">Also used for</span><span class="val">Homepage + Contact + About</span></div>
+      <div class="pricing-row"><span class="lbl">Rate limit</span><span class="val">Generous free tier</span></div>
+      <div class="pricing-row"><span class="lbl">Refresh</span><span class="val"><span class="refresh-badge">↻ No limit</span></span></div>
+    </div>
+    <div class="pricing-card">
+      <h3>n8n</h3>
+      <div class="provider">Automation Platform</div>
+      <div class="pricing-row"><span class="lbl">Self-hosted</span><span class="val green">$0 infra cost</span></div>
+      <div class="pricing-row"><span class="lbl">Workflows</span><span class="val">4 independent</span></div>
+      <div class="pricing-row"><span class="lbl">Execution logs</span><span class="val">Full history</span></div>
+      <div class="pricing-row"><span class="lbl">Trigger types</span><span class="val">Schedule + Form + Sheet</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- RESEARCH FINDINGS -->
+<section id="findings">
+  <div class="section-label">09 — Research Findings</div>
+  <h2>What we learned building this</h2>
+  <p>This system was built independently from the existing one — for research, stress testing, and cost optimization. Here is what the research surfaced.</p>
+
+  <div class="achieve-grid" style="margin-top:2rem;">
+    <div class="achieve-card">
+      <div class="achieve-icon">🔢</div>
+      <div><div class="achieve-title">300 leads is the hard limit per query</div><div class="achieve-desc">Apify's Google Maps actor caps at 300 results per search query. This is a Google Maps API constraint, not an Apify limitation. Cannot be bypassed.</div></div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">🎯</div>
+      <div><div class="achieve-title">Query diversity = more unique leads</div><div class="achieve-desc">Running "cleaning services Singapore" twice returns largely the same 300. But "office cleaning Singapore" vs "house cleaning Singapore" produces significantly less overlap — more total unique leads per dollar spent.</div></div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">🔍</div>
+      <div><div class="achieve-title">Deduplication must happen after scraping</div><div class="achieve-desc">Google Maps cannot be pre-filtered with "don't show me businesses I already have." The query runs first, results come back, then we deduplicate. This means Apify cost is spent before knowing how many are new — unavoidable by design.</div></div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">🤖</div>
+      <div><div class="achieve-title">AI adds cost without accuracy gain for UEN</div><div class="achieve-desc">Gemini web search for UEN costs tokens per lead and sometimes hallucinates. sgpbusiness.com is the canonical ACRA data source — querying it directly via Jina is free, faster, and more reliable.</div></div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">📱</div>
+      <div><div class="achieve-title">Landline vs mobile filtering is critical</div><div class="achieve-desc">Without a mobile-only filter, SG landlines (starting with 3 or 6) get mixed with WhatsApp-eligible mobiles (starting with 8 or 9). The previous system had a bug where this filter was broken due to the +65 prefix not being stripped correctly.</div></div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">📞</div>
+      <div><div class="achieve-title">Google Maps phone is surface-level only</div><div class="achieve-desc">Google Maps lists whatever phone number a business registered — often a landline. The system separates this into two columns: <strong>Map Phone</strong> (raw from Google) and <strong>Website number</strong> (validated SG mobile scraped from the business website). If both are empty, the lead has no publicly available mobile and requires manual outreach or the future DM finder workflow.</div></div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">⚡</div>
+      <div><div class="achieve-title">Isolated workflows = resilient to n8n runtime limits</div><div class="achieve-desc">n8n cloud has execution time limits. A single workflow processing 300 leads end-to-end risks hitting these limits and losing progress. Separate scheduled workflows process one lead at a time and retry automatically.</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- WHAT WE ACHIEVED -->
+<section id="achieved">
+  <div class="section-label">10 — What We Achieved</div>
+  <h2>Outcomes of this research build</h2>
+
+  <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:2rem;">
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Reduced cost per lead from ~$0.02–0.05 to $0.004 USD</strong> by replacing Gemini AI calls with Jina + regex extraction</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Eliminated AI cost entirely from the core pipeline</strong> — UEN lookup and contact enrichment now run at $0 per lead</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Built a fault-tolerant isolated workflow architecture</strong> — 5 isolated workflows, each failure-isolated with automatic retry</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Confirmed 300 leads as the hard ceiling per Apify run</strong> and identified query diversity as the strategy to maximize unique yield</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Discovered and fixed the landline bug</strong> in the previous system's phone normalization — the +65 prefix stripping made the mobile filter ineffective</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Designed a per-AM deployment model</strong> with individual Apify accounts, enabling budget attribution and ROI tracking per manager</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Validated Carousell profile detection</strong> via SerpAPI site: search — confirmed working, framed as optional add-on to keep base cost at zero</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Produced a reusable system architecture</strong> that can be cloned per account manager in minutes — same 5 workflows, different Apify credentials and sheet</div>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="color:var(--green);font-weight:700;font-size:1rem;min-width:20px;">✓</span>
+      <div><strong>Built automatic existing client protection</strong> — WF5 cross-references every scraped lead's UEN and phone number against the SG Top Spenders list, auto-flagging paying clients as <em>Skip - Existing Client</em> before any AM touches them</div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- LIMITATIONS -->
+<section id="limitations">
+  <div class="section-label">11 — Known Limitations</div>
+  <h2>What this system cannot do (yet)</h2>
+  <div class="limit-grid">
+    <div class="limit-card">
+      <div class="limit-title">⚠️ 300 Lead Hard Cap</div>
+      <div class="limit-desc">Google Maps via Apify caps at 300 results per query. Cannot be bypassed — it is a platform constraint.</div>
+      <div class="limit-workaround">→ Workaround: Use diverse industry keywords across multiple runs to maximize unique leads per dollar</div>
+    </div>
+    <div class="limit-card">
+      <div class="limit-title">⚠️ Dedup Cost is Unavoidable</div>
+      <div class="limit-desc">Google cannot be pre-filtered to exclude known businesses. Apify credit is spent before deduplication, meaning some credits go to leads already in the sheet.</div>
+      <div class="limit-workaround">→ Workaround: Vary queries to minimize overlap. Future: pre-filter using place_id matching</div>
+    </div>
+    <div class="limit-card">
+      <div class="limit-title">⚠️ SerpAPI Free Tier Limit</div>
+      <div class="limit-desc">100 free SerpAPI searches per month. Currently exhausted — refreshes at the start of next billing cycle. Carousell checks are paused until then.</div>
+      <div class="limit-workaround">→ Workaround: Upgrade to $50/mo Hobby plan for 5,000 searches, or treat Carousell check as optional per AM</div>
+    </div>
+    <div class="limit-card">
+      <div class="limit-title">⚠️ Website Timeouts</div>
+      <div class="limit-desc">Some SG business websites are slow or block scrapers. Jina enforces a 10-second timeout — leads with inaccessible websites may have empty email/phone fields.</div>
+      <div class="limit-workaround">→ Workaround: Continue-on-fail is enabled — timeout leads are skipped gracefully and can be manually enriched</div>
+    </div>
+    <div class="limit-card">
+      <div class="limit-title">⚠️ UEN Match Confidence</div>
+      <div class="limit-desc">Very generic company names (e.g. "Renovation House") may have low scoring confidence. System writes null rather than guess wrong — these rows show empty UEN.</div>
+      <div class="limit-workaround">→ Workaround: Minimum score threshold prevents false UENs. Low-confidence rows can be manually verified</div>
+    </div>
+    <div class="limit-card">
+      <div class="limit-title">⚠️ SG Only (Currently)</div>
+      <div class="limit-desc">UEN lookup uses sgpbusiness.com which is SG-specific. HK leads would need a different ACRA-equivalent source for company registration numbers.</div>
+      <div class="limit-workaround">→ Workaround: HK expansion is on the roadmap. Apify and contact enrichment already support HK queries</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- NEXT STEPS -->
+<section id="nextsteps">
+  <div class="section-label">12 — Next Steps</div>
+  <h2>Recommended actions</h2>
+  <div class="steps-list">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Each AM signs up for their own Apify account</h3>
+        <p>Free signup at apify.com — $5 credit included monthly. No credit card required to start. Workchestra configures the workflow per AM in minutes.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Decide on Carousell Profile add-on per AM</h3>
+        <p>AMs who want Carousell profile data sign up for their own SerpAPI account (100 free searches/month). Those who don't need it keep their cost at zero. Add-on can be enabled at any time.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Run first batch and measure conversion rate</h3>
+        <p>Each AM submits their first industry keyword query. Track how many leads from the first 300 convert to contacted → qualified → proposal → closed. This establishes the ROI baseline.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Scale based on results</h3>
+        <p>If the first 300 leads produce measurable pipeline, upgrade Apify to the $49/mo plan for unlimited runs. Budget ask is data-backed — not speculative.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>HK market expansion</h3>
+        <p>The same 4 workflows support HK with a country parameter change. UEN equivalent (BR number) lookup requires identifying the HK Companies Registry equivalent of sgpbusiness.com.</p>
+      </div>
+    </div>
+    <div class="step-item" style="border-color:rgba(163,230,53,0.3);">
+      <div class="step-num" style="color:var(--accent3);">?</div>
+      <div class="step-content">
+        <h3 style="display:flex;align-items:center;gap:0.75rem;">LinkedIn Decision Maker Enrichment <span style="font-size:0.7rem;font-family:'Space Mono',monospace;background:rgba(163,230,53,0.1);color:var(--accent3);border:1px solid rgba(163,230,53,0.3);padding:0.2rem 0.6rem;border-radius:99px;">PENDING APPROVAL</span></h3>
+        <p>Currently, decision maker name and role depend on website scraping — which is inconsistent since not all SG SME sites have an About or Team page. LinkedIn enrichment would provide structured DM name, job title, and seniority per lead.</p>
+        <div style="margin-top:1rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;">
+            <div style="font-weight:700;font-size:0.82rem;margin-bottom:0.5rem;">Option A — Apify LinkedIn Actor</div>
+            <div style="font-size:0.78rem;color:var(--muted2);">Apify has LinkedIn Company and People Search scrapers. Lower cost but less reliable — LinkedIn actively blocks scrapers and updates anti-scraping measures frequently.</div>
+            <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--accent);">~$2–5 per 1,000 profiles</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;">
+            <div style="font-weight:700;font-size:0.82rem;margin-bottom:0.5rem;">Option B — Proxycurl API</div>
+            <div style="font-size:0.78rem;color:var(--muted2);">Dedicated LinkedIn data provider. Structured API returns DM name, title, seniority, and company data reliably. Already used in our Workchestra outbound pipeline.</div>
+            <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--accent);">~$0.01 per profile lookup</div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;padding:0.75rem;background:rgba(163,230,53,0.05);border:1px solid rgba(163,230,53,0.2);border-radius:8px;font-size:0.8rem;color:var(--accent3);">
+          → Requires approval to proceed. If approved, this would be added as Workflow 5 — running after contact enrichment, looking up the company name on LinkedIn and writing DM data back to the sheet.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Built by Christian Emmanuelle C. Agustin — Digital Marketing &amp; Automation, Carousell &nbsp;|&nbsp; May 2026 &nbsp;|&nbsp; Internal Research Document
+</footer>
+
+<script>
+// UEN Simulation
+const scores = [4, 3, 2, 3, 3, 2];
+const maxScore = 4;
+
+function runUENSim() {
+  const results = document.querySelectorAll('.uen-result');
+  results.forEach((r, i) => {
+    setTimeout(() => {
+      const fill = document.getElementById('sf' + i);
+      const sc = document.getElementById('sc' + i);
+      fill.style.width = (scores[i] / maxScore * 100) + '%';
+      sc.textContent = scores[i];
+    }, i * 400);
+  });
+  setTimeout(() => {
+    document.getElementById('r0').classList.add('winner');
+    [1,2,3,4,5].forEach(i => document.getElementById('r'+i).classList.add('loser'));
+    document.getElementById('simResult').classList.add('show');
+  }, scores.length * 400 + 200);
+}
+
+function resetUENSim() {
+  const results = document.querySelectorAll('.uen-result');
+  results.forEach((r, i) => {
+    r.classList.remove('winner', 'loser');
+    document.getElementById('sf' + i).style.width = '0%';
+    document.getElementById('sc' + i).textContent = '—';
+  });
+  document.getElementById('simResult').classList.remove('show');
+}
+
+// Pipeline Animation
+let animRunning = false;
+function runPipelineAnim() {
+  if (animRunning) return;
+  animRunning = true;
+  document.getElementById('animStatus').textContent = 'Running pipeline...';
+
+  // Mono: light up green then break
+  const monoIds = ['m0','m1','m2','m3','m4'];
+  const connIds = ['mc0','mc1','mc2','mc3'];
+  monoIds.forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).style.borderColor = 'rgba(34,197,94,0.5)';
+      document.getElementById(id).style.background = 'rgba(34,197,94,0.06)';
+      if (i === 2) {
+        setTimeout(() => {
+          document.getElementById(id).classList.add('broken');
+          document.getElementById(id).style.borderColor = '';
+          document.getElementById(id).style.background = '';
+          // Kill remaining
+          ['m3','m4'].forEach(deadId => {
+            document.getElementById(deadId).classList.add('dead');
+          });
+          ['mc2','mc3'].forEach(cid => {
+            document.getElementById(cid).classList.add('dead');
+          });
+          document.getElementById('monoCost').className = 'pipeline-cost lost';
+          document.getElementById('monoCost').textContent = '💸 $1.20 spent — 0 leads saved';
+          document.getElementById('animStatus').textContent = 'Monolithic: runtime failure on step 3 — entire run lost';
+        }, 600);
+      }
+    }, i * 500);
+  });
+
+  // Modular: one fails, rest survive
+  const modIds = ['d0','d1','d2','d3'];
+  modIds.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (i === 2) {
+        setTimeout(() => {
+          el.classList.remove('safe');
+          el.style.borderColor = 'rgba(239,68,68,0.4)';
+          el.style.background = 'rgba(239,68,68,0.06)';
+          el.querySelector('.dot').style.background = 'var(--red)';
+          el.innerHTML = el.innerHTML.replace('WF3: Contact Enrichment (scheduled)', 'WF3: 1 lead timed out — retrying next cycle');
+          document.getElementById('modCost').className = 'pipeline-cost saved';
+          document.getElementById('modCost').textContent = '✅ $1.20 spent — 299 leads safe';
+        }, 600);
+      }
+    }, i * 500 + 2000);
+  });
+}
+
+function resetPipelineAnim() {
+  animRunning = false;
+  ['m0','m1','m2','m3','m4'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('broken','dead');
+    el.style.borderColor = ''; el.style.background = '';
+  });
+  ['mc0','mc1','mc2','mc3'].forEach(id => document.getElementById(id).classList.remove('dead'));
+  document.getElementById('monoCost').className = 'pipeline-cost';
+  document.getElementById('monoCost').style.cssText = 'background:var(--surface2);border:1px solid var(--border);color:var(--muted2)';
+  document.getElementById('monoCost').textContent = 'Waiting...';
+  ['d0','d1','d2','d3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.add('safe');
+    el.style.borderColor = ''; el.style.background = '';
+    el.querySelector('.dot').style.background = 'var(--green)';
+  });
+  document.getElementById('d2').innerHTML = '<div class="dot"></div>WF3: Contact Enrichment (scheduled)';
+  document.getElementById('modCost').className = 'pipeline-cost';
+  document.getElementById('modCost').style.cssText = 'background:var(--surface2);border:1px solid var(--border);color:var(--muted2)';
+  document.getElementById('modCost').textContent = 'Waiting...';
+  document.getElementById('animStatus').textContent = 'Click to simulate a runtime failure on step 3';
+}
+
+// Plan data -- sourced from apify.com/compass/crawler-google-places/pricing
+const PLANS = {
+  free:     { name: 'Free',     ratePerK: 4.00, prepaid: 5,   monthlyFee: 0   },
+  starter:  { name: 'Starter',  ratePerK: 4.00, prepaid: 29,  monthlyFee: 29  },
+  scale:    { name: 'Scale',    ratePerK: 3.00, prepaid: 199, monthlyFee: 199 },
+  business: { name: 'Business', ratePerK: 2.10, prepaid: 999, monthlyFee: 999 }
+};
+let currentPlan = 'free';
+
+function selectPlan(plan) {
+  currentPlan = plan;
+  document.querySelectorAll('.plan-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('plan-' + plan).classList.add('active');
+  updateCalc();
+}
+
+// Cost Calculator
+function updateCalc() {
+  const leads = parseInt(document.getElementById('leadsSlider').value);
+  const carousell = document.getElementById('carousellToggle').checked;
+  const plan = PLANS[currentPlan];
+  const runs = Math.ceil(leads / 300);
+
+  // Apify cost = runs × 300 × (ratePerK / 1000)
+  const apifyCost = runs * 300 * (plan.ratePerK / 1000);
+  const serpRate = 0.025; // SerpAPI Starter plan rate
+  const serpCost = carousell ? leads * serpRate : 0;
+  const total = apifyCost + serpCost;
+  const cpp = total / leads;
+
+  document.getElementById('leadsVal').textContent = leads.toLocaleString() + ' leads';
+  document.getElementById('runsVal').textContent = runs;
+  document.getElementById('apifyCost').textContent = '~$' + apifyCost.toFixed(2);
+  document.getElementById('uenCost').textContent = '$0.00';
+  document.getElementById('contactCost').textContent = '$0.00';
+  document.getElementById('totalCost').textContent = '~$' + total.toFixed(2);
+  document.getElementById('costPerLead').textContent = '~$' + cpp.toFixed(4);
+  document.getElementById('serpLeads').textContent = leads.toLocaleString();
+  document.getElementById('serpCost').textContent = '$' + serpCost.toFixed(2);
+
+  // Plan warning logic
+  const warning = document.getElementById('planWarning');
+  const apifyLeadCost = apifyCost;
+
+  if (currentPlan === 'free' && apifyLeadCost > plan.prepaid) {
+    warning.style.display = 'block';
+    warning.style.background = 'rgba(239,68,68,0.08)';
+    warning.style.border = '1px solid rgba(239,68,68,0.3)';
+    warning.style.color = '#f87171';
+    warning.innerHTML = `⚠️ <strong>Free plan credit exhausted.</strong> ${leads.toLocaleString()} leads costs ~$${apifyLeadCost.toFixed(2)} but the Free plan only includes $${plan.prepaid} prepaid credit per month. Excess usage is blocked until next cycle. <strong>Recommended: upgrade to Starter ($29/mo) to avoid interruption.</strong>`;
+  } else if (currentPlan === 'starter' && apifyLeadCost > plan.prepaid) {
+    warning.style.display = 'block';
+    warning.style.background = 'rgba(249,115,22,0.08)';
+    warning.style.border = '1px solid rgba(249,115,22,0.3)';
+    warning.style.color = 'var(--accent)';
+    warning.innerHTML = `⚠️ <strong>Starter prepaid budget exceeded.</strong> ~$${apifyLeadCost.toFixed(2)} in usage vs $${plan.prepaid} included. Overage will be billed additionally. Consider <strong>Scale ($199/mo)</strong> for this volume — also unlocks a lower rate of $3.00/1k places.`;
+  } else if (currentPlan === 'scale' && apifyLeadCost > plan.prepaid) {
+    warning.style.display = 'block';
+    warning.style.background = 'rgba(249,115,22,0.08)';
+    warning.style.border = '1px solid rgba(249,115,22,0.3)';
+    warning.style.color = 'var(--accent)';
+    warning.innerHTML = `⚠️ <strong>Scale prepaid budget exceeded.</strong> ~$${apifyLeadCost.toFixed(2)} in usage vs $${plan.prepaid} included. Overage billed additionally. Consider <strong>Business ($999/mo)</strong> for this volume — lowest rate at $2.10/1k places.`;
+  } else {
+    warning.style.display = 'none';
+  }
+
+  const carousellRow = document.getElementById('carousellCostRow');
+  const carousellNote = document.getElementById('carousellNote');
+  const cells = ['r0carousell','r1carousell','r2carousell','r3carousell','r4carousell'];
+  const profiles = ['carousell.sg/u/move_move_movers','carousell.sg/u/sg_renovate','carousell.sg/u/dw_aircon','carousell.sg/u/helpling_sg','carousell.sg/u/marvellous_aircon'];
+
+  if (carousell) {
+    carousellRow.style.display = 'block';
+    if (carousellNote) carousellNote.style.display = 'block';
+    cells.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = profiles[i]; el.className = 'cell-green'; }
+    });
+  } else {
+    carousellRow.style.display = 'none';
+    if (carousellNote) carousellNote.style.display = 'none';
+    cells.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = '—'; el.className = 'cell-muted'; }
+    });
+  }
+}
+
+// Rollout Toggle
+function switchRollout(mode) {
+  document.querySelectorAll('.rollout-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.rollout-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('rollout-' + mode).classList.add('active');
+  document.getElementById('btn-' + mode).classList.add('active');
+}
+
+// Form Simulation
+function simulateFormSubmit() {
+  const industry = document.getElementById('formIndustry').value || 'businesses';
+  document.getElementById('formIndustryResult').textContent = industry;
+  document.getElementById('formResult').style.display = 'block';
+  setTimeout(() => { document.getElementById('formResult').style.display = 'none'; }, 4000);
+}
+</script>
+</body>
+</html>
